@@ -1,13 +1,25 @@
 #!/bin/bash
 set -e
 
+echo "=== simplesysbak Installation ==="
+
 BASE_DIR="/usr/local/simplesysbak"
 LIB_DIR="$BASE_DIR/lib"
 CONFIG_FILE="$BASE_DIR/simplesysbak.json"
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+echo "Installiere simplesysbak nach $BASE_DIR"
+
 mkdir -p "$LIB_DIR"
 
-echo "=== simplesysbak Installation ==="
+# sysbak kopieren
+cp "$SCRIPT_DIR/sysbak.sh" "$BASE_DIR/sysbak.sh"
+chmod +x "$BASE_DIR/sysbak.sh"
+
+# lib-Skripte kopieren
+cp "$SCRIPT_DIR/lib/"*.sh "$LIB_DIR/"
+chmod +x "$LIB_DIR/"*.sh
 
 # ---------------- Dependencies ----------------
 REQUIRED_CMDS=(rsync zip mount.cifs jq)
