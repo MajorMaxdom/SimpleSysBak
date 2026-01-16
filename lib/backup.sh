@@ -37,4 +37,17 @@ run_backup() {
 
   # systembackup.json immer mitsichern
   local REL_CFG="${CONFIG_FILE#/}"
-  mkdir -p "$STAGING/$(dirname "$R
+  mkdir -p "$STAGING/$(dirname "$REL_CFG")"
+  cp -a "$CONFIG_FILE" "$STAGING/$REL_CFG"
+
+  (
+    cd "$STAGING"
+    zip -r "$TMPDIR/$ARCHIVE" .
+  )
+
+  mv "$TMPDIR/$ARCHIVE" "$TARGET"
+}
+
+cleanup_tmp() {
+  [ -n "$SYSBAK_TMPDIR" ] && rm -rf "$SYSBAK_TMPDIR"
+}
