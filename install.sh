@@ -1,47 +1,28 @@
 #!/bin/bash
 set -e
 
-clear
-cat <<'EOF'
-  ░██████   ░██                           ░██              ░██████                         ░████████              ░██       
- ░██   ░██                                ░██             ░██   ░██                        ░██    ░██             ░██       
-░██         ░██░█████████████  ░████████  ░██  ░███████  ░██         ░██    ░██  ░███████  ░██    ░██   ░██████   ░██    ░██
- ░████████  ░██░██   ░██   ░██ ░██    ░██ ░██ ░██    ░██  ░████████  ░██    ░██ ░██        ░████████         ░██  ░██   ░██ 
-        ░██ ░██░██   ░██   ░██ ░██    ░██ ░██ ░█████████         ░██ ░██    ░██  ░███████  ░██     ░██  ░███████  ░███████  
- ░██   ░██  ░██░██   ░██   ░██ ░███   ░██ ░██ ░██         ░██   ░██  ░██   ░███        ░██ ░██     ░██ ░██   ░██  ░██   ░██ 
-  ░██████   ░██░██   ░██   ░██ ░██░█████  ░██  ░███████    ░██████    ░█████░██  ░███████  ░█████████   ░█████░██ ░██    ░██
-                               ░██                                          ░██                                             
-                               ░██                                    ░███████                                              
-EOF
-
 BASE_DIR="/usr/local/simplesysbak"
 LIB_DIR="$BASE_DIR/lib"
 CONFIG_FILE="$BASE_DIR/simplesysbak.json"
 
 mkdir -p "$LIB_DIR"
 
-echo "=== sysbak Installation ==="
+echo "=== simplesysbak Installation ==="
 
 # ---------------- Dependencies ----------------
-source "$LIB_DIR/deps.sh" 2>/dev/null || true
-
 REQUIRED_CMDS=(rsync zip mount.cifs jq)
 
-for CMD in "${REQUIRED_CMDS[@]}"; do
-  if ! command -v "$CMD" >/dev/null; then
-    echo "Installiere Abhängigkeiten..."
-    if command -v apt-get >/dev/null; then
-      apt-get update
-      apt-get install -y rsync zip cifs-utils jq
-    elif command -v dnf >/dev/null; then
-      dnf install -y rsync zip cifs-utils jq
-    else
-      echo "Kein unterstützter Paketmanager"
-      exit 1
-    fi
-    break
+if ! command -v rsync >/dev/null; then
+  if command -v apt-get >/dev/null; then
+    apt-get update
+    apt-get install -y rsync zip cifs-utils jq
+  elif command -v dnf >/dev/null; then
+    dnf install -y rsync zip cifs-utils jq
+  else
+    echo "Kein unterstützter Paketmanager"
+    exit 1
   fi
-done
+fi
 
 # ---------------- Config ----------------------
 if [ -f "$CONFIG_FILE" ]; then
@@ -54,6 +35,9 @@ MOUNTPOINT="${MOUNTPOINT:-/mnt}"
 
 read -rp "SMB Share (//host/share): " SHARE
 
+read -rp "Credential-Datei [/usr/local/simplesysbak/.smbcred]: " CRED_FILE
+CRED_FILE="${CRED_FILE:-/usr/local/simplesysbak/.smbcred}"
+
 read -rp "Retention (Tage) [14]: " RETENTION_DAYS
 RETENTION_DAYS="${RETENTION_DAYS:-14}"
 
@@ -63,9 +47,26 @@ while read -rp "Pfad: " P && [ -n "$P" ]; do
   SOURCES+=("$P")
 done
 
-read -rp "Credential-Datei [/usr/local/simplesysbak/.smbcred]: " CRED_FILE
-CRED_FILE="${CRED_FILE:-/usr/local/simplesysbak/.smbcred}"
+# ---------------- Credentials -----------------
+if [ ! -f "$CRED_FILE" ]; then
+  echo "SMB Credentials anlegen"
 
+  read -rp "SMB Benutzername: " SMB_USER
+  read -rsp "SMB Passwort: " SMB_PASS
+  echo
+  read -rp "SMB Domain (optional): " SMB_DOMAIN
+
+  {
+    echo "username=$SMB_USER"
+    echo "password=$SMB_PASS"
+    [ -n "$SMB_DOMAIN" ] && echo "domain=$SMB_DOMAIN"
+  } > "$CRED_FILE"
+
+  chmod 600 "$CRED_FILE"
+  echo "Credential-Datei erstellt: $CRED_FILE"
+fi
+
+# ---------------- Write Config ----------------
 jq -n \
   --arg mount "$MOUNTPOINT" \
   --arg share "$SHARE" \
