@@ -16,7 +16,7 @@ echo "Creating /usr/local/simplesysbak directory"
 mkdir -p /usr/local/simplesysbak/lib
 
 echo "Copying all files"
-cp simplesysbak.sh /usr/local/simplesysbak/
+cp ssb_run.sh /usr/local/simplesysbak/
 cp lib/*.sh /usr/local/simplesysbak/lib/
 
 echo "Making ssb_run.sh executable"
