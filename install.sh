@@ -54,9 +54,6 @@ MOUNTPOINT="${MOUNTPOINT:-/mnt}"
 
 read -rp "SMB Share (//host/share): " SHARE
 
-read -rp "Credential-Datei [/root/.smbcred]: " CRED_FILE
-CRED_FILE="${CRED_FILE:-/root/.smbcred}"
-
 read -rp "Retention (Tage) [14]: " RETENTION_DAYS
 RETENTION_DAYS="${RETENTION_DAYS:-14}"
 
@@ -65,6 +62,9 @@ SOURCES=()
 while read -rp "Pfad: " P && [ -n "$P" ]; do
   SOURCES+=("$P")
 done
+
+read -rp "Credential-Datei [/usr/local/simplesysbak/.smbcred]: " CRED_FILE
+CRED_FILE="${CRED_FILE:-/usr/local/simplesysbak/.smbcred}"
 
 jq -n \
   --arg mount "$MOUNTPOINT" \
