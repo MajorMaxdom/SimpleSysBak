@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-BASE_DIR="/usr/local/systembackup"
+BASE_DIR="/usr/local/simplesysbak"
 LIB_DIR="$BASE_DIR/lib"
-CONFIG_FILE="$BASE_DIR/systembackup.json"
+CONFIG_FILE="$BASE_DIR/simplesysbak_config.json"
 
 RUN_PREFIX="M-"
 [ "$1" = "-automatic" ] && RUN_PREFIX="A-"

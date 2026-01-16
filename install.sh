@@ -12,14 +12,14 @@ EOF
 
 echo "Installing SimpleSysBak"
 
-echo "Creating /usr/local/systembackup directory"
-mkdir -p /usr/local/systembackup/lib
+echo "Creating /usr/local/simplesysbak directory"
+mkdir -p /usr/local/simplesysbak/lib
 
 echo "Copying all files"
-cp systembackup.sh /usr/local/systembackup/
-cp lib/*.sh /usr/local/systembackup/lib/
+cp simplesysbak.sh /usr/local/simplesysbak/
+cp lib/*.sh /usr/local/simplesysbak/lib/
 
-echo "Making systembackup.sh executable"
-chmod +x /usr/local/systembackup/systembackup.sh
+echo "Making ssb_run.sh executable"
+chmod +x /usr/local/simplesysbak/ssb_run.sh
 
 echo "All Done. Have fun backing up!"
