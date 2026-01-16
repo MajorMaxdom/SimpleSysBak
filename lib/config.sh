@@ -5,8 +5,8 @@ if [ ! -f "$CONFIG_FILE" ]; then
   MOUNTPOINT="${MOUNTPOINT:-/mnt}"
 
   read -rp "SMB Share: " SHARE
-  read -rp "Credential-Datei [/root/.smbcred]: " CRED_FILE
-  CRED_FILE="${CRED_FILE:-/root/.smbcred}"
+  read -rp "Credential-Datei [/usr/local/simplesysbak/.smbcreds]: " CRED_FILE
+  CRED_FILE="${CRED_FILE:-/usr/local/simplesysbak/.smbcreds}"
 
   read -rp "Retention (Tage) [14]: " RETENTION_DAYS
   RETENTION_DAYS="${RETENTION_DAYS:-14}"
