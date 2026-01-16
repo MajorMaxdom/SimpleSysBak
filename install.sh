@@ -5,7 +5,7 @@ echo "=== simplesysbak Installation ==="
 
 BASE_DIR="/usr/local/simplesysbak"
 LIB_DIR="$BASE_DIR/lib"
-CONFIG_FILE="$BASE_DIR/simplesysbak.json"
+CONFIG_FILE="$BASE_DIR/simplesysbak_config.json"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 

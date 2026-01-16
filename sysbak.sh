@@ -10,7 +10,6 @@ RUN_PREFIX="M-"
 
 export CONFIG_FILE RUN_PREFIX
 
-source "$LIB_DIR/config.sh"
 source "$LIB_DIR/mount.sh"
 source "$LIB_DIR/backup.sh"
 source "$LIB_DIR/retention.sh"
