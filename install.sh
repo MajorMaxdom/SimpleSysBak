@@ -14,9 +14,9 @@ cat <<'EOF'
                                ░██                                    ░███████                                              
 EOF
 
-BASE_DIR="/usr/local/systembackup"
+BASE_DIR="/usr/local/simplesysbak"
 LIB_DIR="$BASE_DIR/lib"
-CONFIG_FILE="$BASE_DIR/systembackup.json"
+CONFIG_FILE="$BASE_DIR/simplesysbak.json"
 
 mkdir -p "$LIB_DIR"
 
