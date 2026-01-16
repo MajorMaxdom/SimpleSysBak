@@ -4,29 +4,29 @@ run_backup() {
 
   local MOUNTPOINT
   local HOSTNAME
-  local SOURCES
   local TS
   local ARCHIVE
   local TMPDIR
   local STAGING
   local TARGET
+  local SOURCES
 
   MOUNTPOINT="$(jq -r '.mountpoint' "$CONFIG_FILE")"
   mapfile -t SOURCES < <(jq -r '.sources[]' "$CONFIG_FILE")
   HOSTNAME="$(hostname -s)"
 
   TS="$(date +%F_%H-%M-%S)"
-  ARCHIVE="${RUN_PREFIX}${TS}.zip"
+  ARCHIVE="${RUN_PREFIX}${TS}.tar.gz"
 
-  TMPDIR="$(mktemp -d /tmp/systembackup.XXXXXX)"
+  TMPDIR="$(mktemp -d /tmp/simplesysbak.XXXXXX)"
   STAGING="$TMPDIR/data"
   TARGET="$MOUNTPOINT/$HOSTNAME/$ARCHIVE"
 
-  # TMPDIR für cleanup merken
   export SYSBAK_TMPDIR="$TMPDIR"
 
   mkdir -p "$STAGING" "$MOUNTPOINT/$HOSTNAME"
 
+  # Daten sammeln
   for SRC in "${SOURCES[@]}"; do
     [ -d "$SRC" ] || continue
 
@@ -35,14 +35,15 @@ run_backup() {
     rsync -a "$SRC" "$STAGING/$(dirname "$REL")/"
   done
 
-  # systembackup.json immer mitsichern
-  local REL_CFG="${CONFIG_FILE#/}"
+  # Config immer mitsichern
+  REL_CFG="${CONFIG_FILE#/}"
   mkdir -p "$STAGING/$(dirname "$REL_CFG")"
   cp -a "$CONFIG_FILE" "$STAGING/$REL_CFG"
 
+  # Archiv erstellen
   (
     cd "$STAGING"
-    zip -r "$TMPDIR/$ARCHIVE" .
+    tar -czf "$TMPDIR/$ARCHIVE" .
   )
 
   mv "$TMPDIR/$ARCHIVE" "$TARGET"
