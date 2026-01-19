@@ -27,9 +27,9 @@ REQUIRED_CMDS=(rsync tar mount.cifs jq)
 if ! command -v rsync >/dev/null; then
   if command -v apt-get >/dev/null; then
     apt-get update
-    apt-get install -y rsync tar cifs-utils jq
+    apt-get install -y rsync tar cifs-utils jq pv
   elif command -v dnf >/dev/null; then
-    dnf install -y rsync tar cifs-utils jq
+    dnf install -y rsync tar cifs-utils jq pv
   else
     echo "Kein unterstützter Paketmanager"
     exit 1
